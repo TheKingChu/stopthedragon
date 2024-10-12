@@ -9,11 +9,13 @@ public class PlayerMovement : MonoBehaviour
 
     private float screenWidthInWorldUnits;
     private Rigidbody2D rb2d;
+    private Animator animator;
 
     // Start is called before the first frame update
     void Start()
     {
         rb2d = GetComponent<Rigidbody2D>();
+        animator = GetComponent<Animator>();
 
         //calculate the screen width in world units
         screenWidthInWorldUnits = Camera.main.aspect * Camera.main.orthographicSize * 2f;
@@ -31,6 +33,8 @@ public class PlayerMovement : MonoBehaviour
         float moveInput = Input.GetAxis("Horizontal");
         Vector2 movement = new Vector2(moveInput * moveSpeed, rb2d.velocity.y);
         rb2d.velocity = movement;
+
+        animator.SetFloat("MoveDirection", moveInput);
     }
 
     private void ClampPlayerPosition()
