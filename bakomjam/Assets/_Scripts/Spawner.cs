@@ -25,12 +25,21 @@ public class Spawner : MonoBehaviour
     public GameObject stalactitePrefab;
     public float stalactiteSpawnInterval = 1.0f;
     public Transform[] stalSpawns;
+    private float stalactiteSpawnRateMultiplier = 1.0f;
     private bool isStalactiteEventActive = false;
+
+    [Header("Ice item")]
+    public GameObject iceItemPrefab;
+    private bool iceItemSpawned = false;
+    private float iceItemSpawnRate = 5f;
+    private float lastIceSpawnTime;
 
     private Bounds bounds;
     private List<Vector3> occupiedPositions = new List<Vector3>();
     public SceneLoader sceneLoader;
     private CameraShake cameraShake;
+
+    private bool isSpawningPause = false;
 
     [Header("Sound")]
     public AudioClip[] sfx;
@@ -116,12 +125,19 @@ public class Spawner : MonoBehaviour
     {
         while (true)
         {
-            SpawnObject(fallingObjects[0]);
-            yield return new WaitForSeconds(Random.Range(0.3f, 1f));
-            SpawnObject(fallingObjects[1]);
-            yield return new WaitForSeconds(Random.Range(0.3f, 2f));
-            SpawnObject(fallingObjects[2]);
-            yield return new WaitForSeconds(Random.Range(0.3f, 2f));
+            if (!isSpawningPause)
+            {
+                SpawnObject(fallingObjects[0]);
+                yield return new WaitForSeconds(Random.Range(0.3f, 1f));
+                SpawnObject(fallingObjects[1]);
+                yield return new WaitForSeconds(Random.Range(0.3f, 2f));
+                SpawnObject(fallingObjects[2]);
+                yield return new WaitForSeconds(Random.Range(0.3f, 2f));
+            }
+            else
+            {
+                yield return null; //skip spawning when paused
+            }
         }
     }
 
@@ -173,6 +189,21 @@ public class Spawner : MonoBehaviour
         {
             StopStalactiteEvent();
         }
+
+        // Spawn Ice Item when health is below 50% if not already spawned
+        if (lokeHealthSlider.value < 50) // Assuming you have a boolean iceItemSpawned
+        {
+            if(Time.time >= lastIceSpawnTime + iceItemSpawnRate)
+            {
+                SpawnIceItem(); // Call the method to spawn the ice item
+                lastIceSpawnTime = Time.time;
+            }
+        }
+    }
+
+    private void SpawnIceItem()
+    {
+        Instantiate(iceItemPrefab, new Vector3(Random.Range(-bounds.extents.x, bounds.extents.x), bounds.center.y, 0), Quaternion.identity);
     }
 
     private void StartStalactiteEvent()
@@ -193,8 +224,13 @@ public class Spawner : MonoBehaviour
         {
             int spawnPointIndex = Random.Range(0, stalSpawns.Length);
             Instantiate(stalactitePrefab, stalSpawns[spawnPointIndex].position, Quaternion.identity);
-            yield return new WaitForSeconds(stalactiteSpawnInterval);
+            yield return new WaitForSeconds(stalactiteSpawnInterval / stalactiteSpawnRateMultiplier);
         }
+    }
+
+    public void SetStalactiteSpawnRate(float multiplier)
+    {
+        stalactiteSpawnRateMultiplier = multiplier; // Set the multiplier for spawn rate
     }
 
     private void SpawnSmokeEffect()
@@ -262,8 +298,30 @@ public class Spawner : MonoBehaviour
         acidSlider.value += acidDropDamage;
         if (acidSlider.value >= acidSlider.maxValue)
         {
-            acidSlider.value = 0;
+            StartCoroutine(EmptyingBasketEvent());
         }
+    }
+
+    private IEnumerator EmptyingBasketEvent()
+    {
+        isSpawningPause = true; //stop the spawning
+
+        PlayerMovement player = FindObjectOfType<PlayerMovement>();
+        if(player != null)
+        {
+            player.animator.SetTrigger("Disappear");
+        }
+
+        audioSource.PlayOneShot(sfx[4]);
+
+        yield return new WaitForSeconds(2f);
+
+        if(player != null)
+        {
+            player.animator.SetTrigger("Reappear");
+        }
+        acidSlider.value = 0;
+        isSpawningPause = false;
     }
 
     public void HealthAppleCaught()

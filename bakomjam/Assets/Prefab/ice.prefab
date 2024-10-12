@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 5265290557129833829}
   - component: {fileID: 6624980863818864194}
   - component: {fileID: 7934245698598859033}
+  - component: {fileID: 9146759930544964595}
   m_Layer: 0
   m_Name: ice
   m_TagString: Untagged
@@ -148,3 +149,15 @@ CircleCollider2D:
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
   m_Radius: 0.71
+--- !u!114 &9146759930544964595
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3346366347505682421}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: decd459af437a2a4699571cf99b247ea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

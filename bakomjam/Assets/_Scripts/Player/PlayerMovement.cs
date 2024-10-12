@@ -21,13 +21,17 @@ public class PlayerMovement : MonoBehaviour
 
     private float screenWidthInWorldUnits;
     private Rigidbody2D rb2d;
-    private Animator animator;
+    public Animator animator;
+
+    private AudioSource audioSource;
+    public AudioClip hitSfx;
 
     // Start is called before the first frame update
     void Start()
     {
         rb2d = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
+        audioSource = GetComponent<AudioSource>();
 
         originalMoveSpeed = moveSpeed; //saving the original speed
 
@@ -86,6 +90,7 @@ public class PlayerMovement : MonoBehaviour
 
     public void StunPlayer()
     {
+        audioSource.PlayOneShot(hitSfx);
         isStunned = true;
         stunTimer = stunDuration;
         rb2d.velocity = Vector2.zero;
