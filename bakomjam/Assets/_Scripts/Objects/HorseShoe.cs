@@ -21,7 +21,7 @@ public class HorseShoe : MonoBehaviour
         if (collision.gameObject.CompareTag("Basket"))
         {
             Destroy(this.gameObject);
-            //gameManager.SpeedBoostCaught();
+            gameManager.SpeedBoostCaught();
         }
     }
 }

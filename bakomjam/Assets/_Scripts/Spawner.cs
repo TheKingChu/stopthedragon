@@ -13,12 +13,26 @@ public class Spawner : MonoBehaviour
     public float healthIncreaseAmount = 15f;
     private float lokeMaxHealth = 100f;
 
+    [Header("Health Effects")]
+    public GameObject smokeEffectPrefab;
+    public GameObject flameEffectPrefab;
+    public Transform[] spawnPoints;
+
     [Header("Acid Slider")]
     public Slider acidSlider;
 
     private Bounds bounds;
     private List<Vector3> occupiedPositions = new List<Vector3>();
     public SceneLoader sceneLoader;
+    private CameraShake cameraShake;
+
+    [Header("Sound")]
+    public AudioClip[] sfx;
+    private AudioSource audioSource;
+
+    // Arrays to track active effects
+    private GameObject[] activeSmokeEffects;
+    private GameObject[] activeFlameEffects;
 
     // Start is called before the first frame update
     void Start()
@@ -28,6 +42,12 @@ public class Spawner : MonoBehaviour
 
         lokeHealthSlider.maxValue = lokeMaxHealth;
         lokeHealthSlider.value = lokeMaxHealth;
+
+        activeSmokeEffects = new GameObject[spawnPoints.Length];
+        activeFlameEffects = new GameObject[spawnPoints.Length];
+
+        audioSource = GetComponent<AudioSource>();
+        cameraShake = FindObjectOfType<CameraShake>();
     }
 
     // Get a random spawn position within the bounds
@@ -99,6 +119,10 @@ public class Spawner : MonoBehaviour
     public void AcidDropMissed()
     {
         lokeHealthSlider.value -= acidDropDamage;
+        audioSource.PlayOneShot(sfx[1]);
+        cameraShake.TriggerShake();
+
+        CheckHealthEffects();
 
         if (lokeHealthSlider.value <= 0)
         {
@@ -107,6 +131,76 @@ public class Spawner : MonoBehaviour
             LeaderboardManager.Instance.SubmitNewTime(finalTime);
             LeaderboardManager.Instance.ShowLeaderboardUI();
             sceneLoader.ShowLeaderboard();
+        }
+    }
+
+    private void CheckHealthEffects()
+    {
+        if(lokeHealthSlider.value <= 75 && lokeHealthSlider.value > 50)
+        {
+            //check if smoke has not been spawned already
+            if (!smokeEffectPrefab.activeInHierarchy)
+            {
+                SpawnSmokeEffect();
+            }
+        }
+        else if(lokeHealthSlider.value <= 50 && lokeHealthSlider.value > 0)
+        {
+            //check if flames have not been spawned already
+            if (!flameEffectPrefab.activeInHierarchy)
+            {
+                SpawnFlameEffect();
+            }
+        }
+    }
+
+    private void SpawnSmokeEffect()
+    {
+        for (int i = 0; i < spawnPoints.Length; i++)
+        {
+            // Only spawn smoke if there is no active smoke effect at this spawn point
+            if (activeSmokeEffects[i] == null)
+            {
+                activeSmokeEffects[i] = Instantiate(smokeEffectPrefab, spawnPoints[i].position, Quaternion.identity);
+            }
+        }
+
+        // Remove flames if health goes above 75
+        if (lokeHealthSlider.value > 75)
+        {
+            RemoveFlameEffects();
+        }
+    }
+
+    private void SpawnFlameEffect()
+    {
+        foreach (Transform spawnPoint in spawnPoints)
+        {
+            Instantiate(flameEffectPrefab, spawnPoint.position, Quaternion.identity);
+        }
+    }
+
+    private void RemoveSmokeEffects()
+    {
+        for (int i = 0; i < spawnPoints.Length; i++)
+        {
+            if (activeSmokeEffects[i] != null)
+            {
+                Destroy(activeSmokeEffects[i]);
+                activeSmokeEffects[i] = null; // Reset the reference
+            }
+        }
+    }
+
+    private void RemoveFlameEffects()
+    {
+        for (int i = 0; i < spawnPoints.Length; i++)
+        {
+            if (activeFlameEffects[i] != null)
+            {
+                Destroy(activeFlameEffects[i]);
+                activeFlameEffects[i] = null; // Reset the reference
+            }
         }
     }
 
@@ -121,6 +215,27 @@ public class Spawner : MonoBehaviour
 
     public void HealthAppleCaught()
     {
+        audioSource.PlayOneShot(sfx[0]);
         lokeHealthSlider.value = Mathf.Min(lokeHealthSlider.value + healthIncreaseAmount, lokeMaxHealth);
+
+        if(lokeHealthSlider.value > 50)
+        {
+            RemoveSmokeEffects();
+        }
+        
+        if(lokeHealthSlider.value > 75)
+        {
+            RemoveFlameEffects();
+        }
+    }
+
+    public void SpeedBoostCaught()
+    {
+        PlayerMovement playerMovement = FindObjectOfType<PlayerMovement>();
+        if (playerMovement != null)
+        {
+            audioSource.PlayOneShot(sfx[2]);
+            playerMovement.ApplySpeedBoost();
+        }
     }
 }

@@ -11,6 +11,8 @@ public class LeaderboardManager : MonoBehaviour
     private List<float> bestTimes = new List<float>();
     private const int maxEntries = 5;
 
+    public AudioSource audioSource;
+
     public static LeaderboardManager Instance { get; private set; }
 
     private void Awake()
@@ -19,6 +21,7 @@ public class LeaderboardManager : MonoBehaviour
         {
             Instance = this;
             DontDestroyOnLoad(gameObject); // Keep this instance between scenes
+            audioSource.Play();
             HideLeaderboardUI();
         }
         else

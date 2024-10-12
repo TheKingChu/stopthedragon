@@ -5,11 +5,13 @@ using UnityEngine;
 public class GoldenApple : MonoBehaviour
 {
     private Spawner gameManager;
+    private AudioSource audioSource;
 
     // Start is called before the first frame update
     void Start()
     {
         gameManager = FindObjectOfType<Spawner>();
+        audioSource = GetComponent<AudioSource>();
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
