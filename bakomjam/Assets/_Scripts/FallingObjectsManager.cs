@@ -8,10 +8,10 @@ public class FallingObjectsManager : MonoBehaviour
     [Header("Prefabs")]
     public GameObject acidDropPrefab;
     public GameObject healthApplePrefab;
+    public GameObject speedBoostPrefab;
 
     [Header("Spawn boundries")]
-    public Transform spawnPointLeft;
-    public Transform spawnPointRight;
+    public Transform spawnPoint;
 
     [Header("Loki stuff")]
     public Slider lokeHealthSlider;
@@ -21,11 +21,11 @@ public class FallingObjectsManager : MonoBehaviour
     [Header("Acid Slider")]
     public Slider acidSlider;
 
-    public float minSpawnDelay = 0.5f;
-    public float maxSpawnDelay = 2.0f;
+    public float minSpawnDelay = 0.3f;
+    public float maxSpawnDelay = 1.5f;
 
-    public float minDropSpeed = 2f;
-    public float maxDropSpeed = 5f;
+    public float minDropSpeed = 1.5f;
+    public float maxDropSpeed = 6f;
 
     private float lokeMaxHealth = 100f;
 
@@ -41,23 +41,51 @@ public class FallingObjectsManager : MonoBehaviour
         lokeHealthSlider.value = lokeMaxHealth;
     }
 
+    private GameObject GetRandomFallingObject()
+    {
+        // Define weights for each object type
+        List<(GameObject prefab, float weight)> objects = new List<(GameObject, float)>
+        {
+            (acidDropPrefab, 0.8f), // 80% chance
+            (healthApplePrefab, 0.8f),
+            (speedBoostPrefab, 0.8f) // 10% chance
+            // Add more objects with respective weights here
+        };
+
+        // Calculate total weight
+        float totalWeight = 0f;
+        foreach (var obj in objects)
+        {
+            totalWeight += obj.weight;
+        }
+
+        // Get a random value
+        float randomValue = Random.value * totalWeight;
+
+        // Determine which object to return based on weights
+        foreach (var obj in objects)
+        {
+            if (randomValue < obj.weight)
+            {
+                return obj.prefab;
+            }
+            randomValue -= obj.weight;
+        }
+
+        return acidDropPrefab; // Fallback in case of an error
+    }
+
+
+
     private IEnumerator SpawnFallingObjects()
     {
         while (true)
         {
-            GameObject objectToSpawn;
-            if(Random.value > 0.8f) //20% chance to spawn health apple
-            {
-                objectToSpawn = healthApplePrefab;
-            }
-            else
-            {
-                objectToSpawn = acidDropPrefab;
-            }
+            GameObject objectToSpawn = GetRandomFallingObject();
 
-            //random position between left and right bounds
-            float randomX = Random.Range(spawnPointLeft.position.x, spawnPointRight.position.x);
-            Vector3 spawnPosition = new Vector3(randomX, spawnPointLeft.position.y, 0);
+            //Randomize X position along the spawnArea transform
+            float randomX = Random.Range(spawnPoint.position.x - (spawnPoint.localScale.x / 2), spawnPoint.position.x + (spawnPoint.localScale.x / 2));
+            Vector3 spawnPosition = new Vector3(randomX, spawnPoint.position.y, 0); // Keep Y fixed
 
             GameObject fallingObject = Instantiate(objectToSpawn, spawnPosition, Quaternion.identity);
 
@@ -97,9 +125,13 @@ public class FallingObjectsManager : MonoBehaviour
         lokeHealthSlider.value = Mathf.Min(lokeHealthSlider.value + healthIncreaseAmount, lokeMaxHealth);
     }
 
-    // Update is called once per frame
-    void Update()
+    public void SpeedBoostCaught()
     {
-        
+
+    }
+
+    public void StalagtittCaught()
+    {
+
     }
 }

@@ -4,12 +4,12 @@ using UnityEngine;
 
 public class GoldenApple : MonoBehaviour
 {
-    private FallingObjectsManager gameManager;
+    private Spawner gameManager;
 
     // Start is called before the first frame update
     void Start()
     {
-        gameManager = FindObjectOfType<FallingObjectsManager>();
+        gameManager = FindObjectOfType<Spawner>();
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
