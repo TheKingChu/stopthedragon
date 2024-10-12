@@ -5,6 +5,11 @@ using UnityEngine.SceneManagement;
 
 public class SceneLoader : MonoBehaviour
 {
+    private void Start()
+    {
+        LeaderboardManager.Instance.HideLeaderboardUI();
+    }
+
     public void StartGame()
     {
         SceneManager.LoadScene(1);

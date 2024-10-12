@@ -31,6 +31,7 @@ public class FallingObjectsManager : MonoBehaviour
 
     public SceneLoader sceneLoader;
 
+
     // Start is called before the first frame update
     void Start()
     {
@@ -75,6 +76,9 @@ public class FallingObjectsManager : MonoBehaviour
         if(lokeHealthSlider.value <= 0)
         {
             FindObjectOfType<TimeManager>().StopTimer();
+            float finalTime = FindObjectOfType<TimeManager>().GetFinalTime();
+            LeaderboardManager.Instance.SubmitNewTime(finalTime);
+            LeaderboardManager.Instance.ShowLeaderboardUI();
             sceneLoader.ShowLeaderboard();
         }
     }
