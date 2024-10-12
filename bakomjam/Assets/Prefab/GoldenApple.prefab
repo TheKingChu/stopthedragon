@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 4665564353568281}
   - component: {fileID: 3127299566439360600}
   - component: {fileID: 1559983286406969504}
+  - component: {fileID: 8291760713749088109}
   m_Layer: 0
   m_Name: GoldenApple
   m_TagString: HealthApple
@@ -76,12 +77,12 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: 379f294e811007240aad21ae8a3c8529, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 0616a224808ea144b9cc515e839acc11, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 1, y: 1}
+  m_Size: {x: 34.559998, y: 46.079998}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
@@ -149,6 +150,18 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
+--- !u!114 &8291760713749088109
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6661568398341108969}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 94d7d338c28f05f4eb45d26cba133454, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &7885369358342778564
 GameObject:
   m_ObjectHideFlags: 0
@@ -194,11 +207,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_ComponentVersion: 1
-  m_LightType: 2
+  m_LightType: 1
   m_BlendStyleIndex: 0
   m_FalloffIntensity: 0.5
   m_Color: {r: 1, g: 0.9160186, b: 0, a: 1}
-  m_Intensity: 2.5
+  m_Intensity: 2.01
   m_LightVolumeIntensity: 1
   m_LightVolumeIntensityEnabled: 0
   m_ApplyToSortingLayers: 00000000
@@ -215,8 +228,8 @@ MonoBehaviour:
   m_ShadowVolumeIntensityEnabled: 0
   m_ShadowVolumeIntensity: 0.75
   m_LocalBounds:
-    m_Center: {x: -0.00850001, y: -0.007499993, z: 0}
-    m_Extent: {x: 0.6745, y: 0.6915, z: 0}
+    m_Center: {x: -0.113350034, y: -0.07805002, z: 0}
+    m_Extent: {x: 1.40195, y: 1.27755, z: 0}
   m_PointLightInnerAngle: 360
   m_PointLightOuterAngle: 360
   m_PointLightInnerRadius: 0
@@ -227,7 +240,9 @@ MonoBehaviour:
   m_ShapeLightFalloffSize: 0.5
   m_ShapeLightFalloffOffset: {x: 0, y: 0}
   m_ShapePath:
-  - {x: -0.5, y: -0.5, z: 0}
+  - {x: 0.068134904, y: -0.85586476, z: 0}
   - {x: 0.5, y: -0.5, z: 0}
-  - {x: 0.5, y: 0.5, z: 0}
-  - {x: -0.5, y: 0.5, z: 0}
+  - {x: 0.7897699, y: 0.15920264, z: 0}
+  - {x: 0.38762167, y: 0.6997837, z: 0}
+  - {x: -1.018189, y: 0.27524334, z: 0}
+  - {x: -0.59622943, y: -0.4776079, z: 0}
