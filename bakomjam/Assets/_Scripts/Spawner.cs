@@ -21,6 +21,12 @@ public class Spawner : MonoBehaviour
     [Header("Acid Slider")]
     public Slider acidSlider;
 
+    [Header("Stalactite")]
+    public GameObject stalactitePrefab;
+    public float stalactiteSpawnInterval = 1.0f;
+    public Transform[] stalSpawns;
+    private bool isStalactiteEventActive = false;
+
     private Bounds bounds;
     private List<Vector3> occupiedPositions = new List<Vector3>();
     public SceneLoader sceneLoader;
@@ -98,8 +104,11 @@ public class Spawner : MonoBehaviour
     private void SpawnObject(GameObject obj)
     {
         Vector3 spawnPosition = GetUniqueSpawnPosition();
-        GameObject fallingObject = Instantiate(obj);
-        fallingObject.transform.position = bounds.center + spawnPosition; // Set the spawn position
+        if(spawnPosition != Vector3.zero)
+        {
+            GameObject fallingObject = Instantiate(obj);
+            fallingObject.transform.position = bounds.center + spawnPosition; // Set the spawn position
+        }
     }
 
 
@@ -126,6 +135,7 @@ public class Spawner : MonoBehaviour
 
         if (lokeHealthSlider.value <= 0)
         {
+            audioSource.PlayOneShot(sfx[3]);
             FindObjectOfType<TimeManager>().StopTimer();
             float finalTime = FindObjectOfType<TimeManager>().GetFinalTime();
             LeaderboardManager.Instance.SubmitNewTime(finalTime);
@@ -152,6 +162,39 @@ public class Spawner : MonoBehaviour
                 SpawnFlameEffect();
             }
         }
+
+        // Start the stalactite event when health reaches 25%
+        if (lokeHealthSlider.value <= 25 && !isStalactiteEventActive)
+        {
+            StartStalactiteEvent();
+        }
+        // Stop the stalactite event when health is above 25%
+        else if (lokeHealthSlider.value > 25 && isStalactiteEventActive)
+        {
+            StopStalactiteEvent();
+        }
+    }
+
+    private void StartStalactiteEvent()
+    {
+        isStalactiteEventActive = true;
+        StartCoroutine(SpawnStalactites());
+    }
+
+    private void StopStalactiteEvent()
+    {
+        isStalactiteEventActive = false;
+        StopCoroutine(SpawnStalactites());
+    }
+
+    private IEnumerator SpawnStalactites()
+    {
+        while (isStalactiteEventActive)
+        {
+            int spawnPointIndex = Random.Range(0, stalSpawns.Length);
+            Instantiate(stalactitePrefab, stalSpawns[spawnPointIndex].position, Quaternion.identity);
+            yield return new WaitForSeconds(stalactiteSpawnInterval);
+        }
     }
 
     private void SpawnSmokeEffect()
@@ -174,9 +217,19 @@ public class Spawner : MonoBehaviour
 
     private void SpawnFlameEffect()
     {
-        foreach (Transform spawnPoint in spawnPoints)
+        for (int i = 0; i < spawnPoints.Length; i++)
         {
-            Instantiate(flameEffectPrefab, spawnPoint.position, Quaternion.identity);
+            // Only spawn flames if there is no active flame effect at this spawn point
+            if (activeFlameEffects[i] == null)
+            {
+                activeFlameEffects[i] = Instantiate(flameEffectPrefab, spawnPoints[i].position, Quaternion.identity);
+            }
+        }
+
+        // Remove smoke effects if health goes above 50
+        if (lokeHealthSlider.value > 50)
+        {
+            RemoveSmokeEffects();
         }
     }
 
