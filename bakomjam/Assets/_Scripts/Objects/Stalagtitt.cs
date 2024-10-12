@@ -4,12 +4,12 @@ using UnityEngine;
 
 public class Stalagtitt : MonoBehaviour
 {
-    private FallingObjectsManager gameManager;
+    PlayerMovement player;
 
     // Start is called before the first frame update
     void Start()
     {
-        gameManager = FindObjectOfType<FallingObjectsManager>();
+        player = FindObjectOfType<PlayerMovement>();
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -20,8 +20,11 @@ public class Stalagtitt : MonoBehaviour
         }
         if (collision.gameObject.CompareTag("Basket"))
         {
+            if(player != null)
+            {
+                player.StunPlayer();
+            }
             Destroy(this.gameObject);
-            gameManager.StalagtittCaught();
         }
     }
 }

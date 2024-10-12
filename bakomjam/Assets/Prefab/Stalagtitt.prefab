@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 2930367560437787939}
   - component: {fileID: 8537716025273042172}
   - component: {fileID: 95989710089790173}
+  - component: {fileID: 4719704736964374167}
   m_Layer: 0
   m_Name: Stalagtitt
   m_TagString: Untagged
@@ -158,3 +159,15 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
+--- !u!114 &4719704736964374167
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8334893084923217501}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 56a7ea6d014ccca4fb52240d628eb705, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
