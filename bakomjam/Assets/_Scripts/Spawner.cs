@@ -25,12 +25,12 @@ public class Spawner : MonoBehaviour
     public GameObject stalactitePrefab;
     public float stalactiteSpawnInterval = 1.0f;
     public Transform[] stalSpawns;
+    public Image redOverlayImage;
     private float stalactiteSpawnRateMultiplier = 1.0f;
     private bool isStalactiteEventActive = false;
 
     [Header("Ice item")]
     public GameObject iceItemPrefab;
-    private bool iceItemSpawned = false;
     private float iceItemSpawnRate = 5f;
     private float lastIceSpawnTime;
 
@@ -182,7 +182,7 @@ public class Spawner : MonoBehaviour
         // Start the stalactite event when health reaches 25%
         if (lokeHealthSlider.value <= 25 && !isStalactiteEventActive)
         {
-            StartStalactiteEvent();
+            StartCoroutine(StartStalactiteEvent());
         }
         // Stop the stalactite event when health is above 25%
         else if (lokeHealthSlider.value > 25 && isStalactiteEventActive)
@@ -206,8 +206,17 @@ public class Spawner : MonoBehaviour
         Instantiate(iceItemPrefab, new Vector3(Random.Range(-bounds.extents.x, bounds.extents.x), bounds.center.y, 0), Quaternion.identity);
     }
 
-    private void StartStalactiteEvent()
+    private IEnumerator StartStalactiteEvent()
     {
+        //step 1 trigger screen shake
+        cameraShake.TriggerEventShake();
+        //step 2 red screen pulse effect
+        StartCoroutine(ScreenPulseRed());
+        //step 3 sound
+        audioSource.PlayOneShot(sfx[5]);
+        //wait before spawning the stalactites
+        yield return new WaitForSeconds(1.5f);
+        //step 4 spawning
         isStalactiteEventActive = true;
         StartCoroutine(SpawnStalactites());
     }
@@ -231,6 +240,25 @@ public class Spawner : MonoBehaviour
     public void SetStalactiteSpawnRate(float multiplier)
     {
         stalactiteSpawnRateMultiplier = multiplier; // Set the multiplier for spawn rate
+    }
+
+    private IEnumerator ScreenPulseRed()
+    {
+        float pulseDuration = 1.5f;
+        float pulseSpeed = 2f;
+        float elapsedTim = 0f;
+
+        while(elapsedTim < pulseDuration)
+        {
+            elapsedTim += Time.deltaTime;
+            float alpha = Mathf.PingPong(Time.time * pulseSpeed, 0.5f);
+            Color newColor = new Color(1f, 0f, 0f, alpha);
+            redOverlayImage.color = newColor;
+            yield return null;
+        }
+
+        //resetting the red overlay to transparent after the pulse
+        redOverlayImage.color = new Color(1f, 0f, 0f, 0f);
     }
 
     private void SpawnSmokeEffect()
