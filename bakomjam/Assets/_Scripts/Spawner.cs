@@ -99,9 +99,9 @@ public class Spawner : MonoBehaviour
             attempts++;
 
             // Limit attempts to prevent infinite loops
-            if (attempts > 1000)
+            if (attempts > 99999999)
             {
-                Debug.LogWarning("Failed to find unique spawn position after 10 attempts.");
+                Debug.LogWarning("Failed to find unique spawn position after 99999999 attempts.");
                 return spawnPosition; // Fallback to the last generated position
             }
         } while (IsPositionOccupied(spawnPosition));

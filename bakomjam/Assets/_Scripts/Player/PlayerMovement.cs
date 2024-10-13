@@ -14,9 +14,6 @@ public class PlayerMovement : MonoBehaviour
     [Header("Screen bounds")]
     public float screenBoundsOffset = 0.5f;
 
-    [Header("Stun")]
-    public float stunDuration = 2f;
-    private float stunTimer;
     private bool isStunned = false;
 
     private float screenWidthInWorldUnits;
@@ -42,11 +39,7 @@ public class PlayerMovement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (isStunned)
-        {
-            StunUpdate();
-        }
-        else
+        if(!isStunned)
         {
             MovePlayer();
             ClampPlayerPosition();
@@ -79,21 +72,38 @@ public class PlayerMovement : MonoBehaviour
         transform.position = playerPosition;
     }
 
-    private void StunUpdate()
+    public void OnHitByStalactite()
     {
-        stunTimer -= Time.deltaTime;
-        if(stunTimer <= 0)
+        if (!isStunned)
         {
-            isStunned = false;
+            //step 1 diable movement and fade out sprite
+            rb2d.velocity = Vector2.zero;
+            isStunned = true;
+            animator.SetFloat("MoveDirection", 0);
+            animator.ResetTrigger("Reappear");
+            animator.SetTrigger("Disappear");
+            audioSource.PlayOneShot(hitSfx);
+
+            StartCoroutine(MovePlayerAfterDelay(1f));
         }
     }
 
-    public void StunPlayer()
+    private IEnumerator MovePlayerAfterDelay(float delay)
     {
-        audioSource.PlayOneShot(hitSfx);
-        isStunned = true;
-        stunTimer = stunDuration;
-        rb2d.velocity = Vector2.zero;
+        yield return new WaitForSeconds(delay);
+
+        transform.position = new Vector3(0f, -3f, 0f);
+
+        StartCoroutine(ReappearAfterDelay(0.2f));
+    }
+
+    private IEnumerator ReappearAfterDelay(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+
+        animator.ResetTrigger("Disappear");
+        animator.SetTrigger("Reappear");
+        isStunned = false;
     }
 
     public void ApplySpeedBoost()
