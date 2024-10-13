@@ -1,4 +1,6 @@
 using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 using Unity.VisualScripting;
 using UnityEditor.Rendering.LookDev;
 using UnityEngine;
@@ -48,10 +50,15 @@ public class SimpleSpawner : MonoBehaviour
     private CameraShake cameraShake;
 
     private bool isSpawningPause = false;
+    private List<int> availableTransformIndices;
+    private Dictionary<int, GameObject> lastSpawnedObjects;
 
     // Start is called before the first frame update
     void Start()
     {
+        lastSpawnedObjects = new Dictionary<int, GameObject>();
+        Debug.Log($"Falling Objects Count: {fallingObjects.Length}, Falling Transforms Count: {fallingTransforms.Length}");
+
         Debug.Log("SimpleSpawner script started"); // Log when the script starts
         StartCoroutine(RandomSpawnTimer()); // Start the spawning coroutine
 
@@ -63,29 +70,80 @@ public class SimpleSpawner : MonoBehaviour
 
         audioSource = GetComponent<AudioSource>();
         cameraShake = FindObjectOfType<CameraShake>();
+
     }
 
     private IEnumerator RandomSpawnTimer()
     {
-        Debug.Log("RandomSpawnTimer coroutine started"); // Log when the coroutine starts
+        Debug.Log("RandomSpawnTimer coroutine started");
 
         while (true)
         {
-            if (fallingTransforms.Length > 0 && fallingObjects.Length > 0)
+            if (!isSpawningPause)
             {
-                int randomIndex = Random.Range(0, fallingTransforms.Length);
-                Vector3 spawnPosition = fallingTransforms[randomIndex].position;
 
-                Debug.Log("Spawning object: " + fallingObjects[0].name + " at " + spawnPosition); // Log the spawn
-                Instantiate(fallingObjects[0], spawnPosition, Quaternion.identity); // Spawn the first object for testing
+                // Check for valid falling objects and transforms
+                if (fallingObjects.Length == 0 || fallingTransforms.Length == 0)
+                {
+                    Debug.LogWarning("No fallingObjects or fallingTransforms assigned!");
+                    yield return null; // Skip if nothing to spawn
+                }
+                else
+                {
+                    // Create a list of available transform indices
+                    List<int> availableTransformIndices = new List<int>(Enumerable.Range(0, fallingTransforms.Length));
 
-                yield return new WaitForSeconds(1f); // Wait before spawning again
+                    // Shuffle the available indices
+                    ShuffleList(availableTransformIndices);
+
+                    foreach (int transformIndex in availableTransformIndices)
+                    {
+                        // Randomly select an object
+                        int randomObjIndex = Random.Range(0, fallingObjects.Length);
+                        GameObject objToSpawn = fallingObjects[randomObjIndex];
+
+                        // Get the spawn position
+                        Vector3 spawnPosition = fallingTransforms[transformIndex].position;
+
+                        // Check if the object is the same as the last one spawned at this position
+                        if (lastSpawnedObjects.ContainsKey(transformIndex) && lastSpawnedObjects[transformIndex] == objToSpawn)
+                        {
+                            Debug.Log("Same object and position selected; skipping spawn.");
+                            continue; // Skip this spawn if it's the same object
+                        }
+
+                        // Log the spawn
+                        Debug.Log($"Spawning object: {objToSpawn.name} at {spawnPosition} (Object Index: {randomObjIndex}, Transform Index: {transformIndex})");
+
+                        // Instantiate the object at the spawn position
+                        Instantiate(objToSpawn, spawnPosition, Quaternion.identity);
+
+                        // Track the last spawned object at this position
+                        lastSpawnedObjects[transformIndex] = objToSpawn;
+
+                        // Wait before the next spawn
+                        yield return new WaitForSeconds(Random.Range(0.3f, 1f)); // Wait before spawning again
+
+                        // Break after one successful spawn to avoid rapid-fire spawns at the same position
+                        break; // Break out of the loop after spawning one object
+                    }
+                }
             }
-            else
-            {
-                Debug.LogWarning("No fallingTransforms or fallingObjects assigned!"); // Log warning
-                yield return null; // Skip if nothing to spawn
-            }
+
+            // Reset the available transforms for the next cycle
+            yield return new WaitForSeconds(Random.Range(0.3f, 1f)); // Wait before the next spawn cycle
+        }
+    }
+
+    private void ShuffleList(List<int> list)
+    {
+        for (int i = list.Count - 1; i > 0; i--)
+        {
+            int j = Random.Range(0, i + 1);
+            // Swap
+            int temp = list[i];
+            list[i] = list[j];
+            list[j] = temp;
         }
     }
 
