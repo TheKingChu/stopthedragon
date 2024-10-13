@@ -4,12 +4,12 @@ using UnityEngine;
 
 public class Acid : MonoBehaviour
 {
-    private Spawner gameManager;
+    private SimpleSpawner gameManager;
 
     // Start is called before the first frame update
     void Start()
     {
-        gameManager = FindObjectOfType<Spawner>();
+        gameManager = FindObjectOfType<SimpleSpawner>();
     }
 
     private void OnTriggerEnter2D(Collider2D collision)

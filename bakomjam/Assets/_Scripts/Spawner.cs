@@ -73,53 +73,12 @@ public class Spawner : MonoBehaviour
         return new Vector3(x, y, 0);
     }
 
-    // Check if the position is occupied
-    private bool IsPositionOccupied(Vector3 position)
-    {
-        float overlapThreshold = 0.5f; // Adjust based on your object's size
-        foreach (Vector3 occupiedPosition in occupiedPositions)
-        {
-            if (Vector3.Distance(position, occupiedPosition) < overlapThreshold)
-            {
-                return true; // Position is occupied
-            }
-        }
-        return false; // Position is free
-    }
-
-    private Vector3 GetUniqueSpawnPosition()
-    {
-        Vector3 spawnPosition;
-        int attempts = 0;
-
-        // Try to find a unique spawn position within a limited number of attempts
-        do
-        {
-            spawnPosition = GetRandomSpawnPosition();
-            attempts++;
-
-            // Limit attempts to prevent infinite loops
-            if (attempts > 10)
-            {
-                Debug.LogWarning("Failed to find unique spawn position after 10 attempts.");
-                return spawnPosition; // Fallback to the last generated position
-            }
-        } while (IsPositionOccupied(spawnPosition));
-
-        occupiedPositions.Add(spawnPosition); // Add the new position to the list
-        return spawnPosition;
-    }
-
     private void SpawnObject(GameObject obj)
     {
-        Vector3 spawnPosition = GetUniqueSpawnPosition();
-        if(spawnPosition != Vector3.zero)
-        {
-            GameObject fallingObject = Instantiate(obj);
-            fallingObject.transform.position = bounds.center + spawnPosition; // Set the spawn position
-        }
+        Vector3 spawnPosition = GetRandomSpawnPosition();
+        GameObject fallingObject = Instantiate(obj);
+        fallingObject.transform.position = bounds.center + spawnPosition; // Set the spawn position
     }
-
 
     private IEnumerator RandomSpawnTimer()
     {
@@ -136,7 +95,7 @@ public class Spawner : MonoBehaviour
             }
             else
             {
-                yield return null; //skip spawning when paused
+                yield return null; // Skip spawning when paused
             }
         }
     }

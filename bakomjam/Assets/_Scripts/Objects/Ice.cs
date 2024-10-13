@@ -6,14 +6,14 @@ using UnityEngine.Rendering.Universal;
 public class Ice : MonoBehaviour
 {
     public float effectDuration = 10f;
-    private Spawner spawner;
+    private SimpleSpawner spawner;
 
     private Light2D globalLight;
 
     // Start is called before the first frame update
     void Start()
     {
-        spawner = FindObjectOfType<Spawner>();
+        spawner = FindObjectOfType<SimpleSpawner>();
         globalLight = FindObjectOfType<Light2D>();
 
         if(spawner.lokeHealthSlider.value < 50)

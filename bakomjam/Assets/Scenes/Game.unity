@@ -2927,7 +2927,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1347023587}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 13c56ef90070c4f4eaaf3fcaedda5783, type: 3}
   m_Name: 
@@ -3118,7 +3118,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1347023587}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 72e02d06772feca4999097fdaae83ba3, type: 3}
   m_Name: 
@@ -3137,6 +3137,40 @@ MonoBehaviour:
   - {fileID: 1978114870}
   - {fileID: 790829251}
   - {fileID: 1567608535}
+  lokeHealthSlider: {fileID: 1677710110}
+  acidDropDamage: 10
+  healthIncreaseAmount: 15
+  smokeEffectPrefab: {fileID: 662696031523440590, guid: 04b32316bb3f3ba40aa79f9b3aa512b3, type: 3}
+  flameEffectPrefab: {fileID: 7829698840583770183, guid: 60de50d68633a8c49be3e41b1bd080a8, type: 3}
+  spawnPoints:
+  - {fileID: 190811285}
+  - {fileID: 89036359}
+  - {fileID: 1178961084}
+  - {fileID: 2049743509}
+  acidSlider: {fileID: 369342801}
+  stalactitePrefab: {fileID: 8334893084923217501, guid: 969ce68885b778f48b76ff0f46548261, type: 3}
+  stalactiteSpawnInterval: 1
+  stalSpawns:
+  - {fileID: 676697572}
+  - {fileID: 723433933}
+  - {fileID: 351022953}
+  - {fileID: 260151614}
+  - {fileID: 1062727798}
+  - {fileID: 1308511482}
+  - {fileID: 1954406757}
+  - {fileID: 237492267}
+  redOverlayImage: {fileID: 1223226025}
+  iceItemPrefab: {fileID: 3346366347505682421, guid: dbcf0c498c94a4c43a671a31e6ccdd02, type: 3}
+  sfx:
+  - {fileID: 8300000, guid: 70c7869706f91884883e7902321d1cff, type: 3}
+  - {fileID: 8300000, guid: 7589a023413aa2348a192eb9068b2775, type: 3}
+  - {fileID: 8300000, guid: 179d09231224994409aa3238503a0abb, type: 3}
+  - {fileID: 8300000, guid: dce9d565e5598024ca522ce1b8e6fb4a, type: 3}
+  - {fileID: 8300000, guid: 0d6f8440d4089604b942763c8165e51a, type: 3}
+  - {fileID: 8300000, guid: 946c50a2db703ba4fbf11ffb9ca6a9a7, type: 3}
+  - {fileID: 8300000, guid: a348dcd063a23674fb9b392c768d5a99, type: 3}
+  - {fileID: 8300000, guid: 84cd345344a9f2b4d9b4f9b6c45bed82, type: 3}
+  sceneLoader: {fileID: 1347023591}
 --- !u!1 &1449147159
 GameObject:
   m_ObjectHideFlags: 0
