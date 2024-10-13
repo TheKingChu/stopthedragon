@@ -7,11 +7,10 @@ public class LeaderboardManager : MonoBehaviour
 {
     public TMP_Text leaderboardTexts;
     public GameObject button;
+    public GameObject panel;
     
     private List<float> bestTimes = new List<float>();
     private const int maxEntries = 5;
-
-    public AudioSource audioSource;
 
     public static LeaderboardManager Instance { get; private set; }
 
@@ -21,7 +20,6 @@ public class LeaderboardManager : MonoBehaviour
         {
             Instance = this;
             DontDestroyOnLoad(gameObject); // Keep this instance between scenes
-            audioSource.Play();
             HideLeaderboardUI();
         }
         else
@@ -92,6 +90,7 @@ public class LeaderboardManager : MonoBehaviour
 
     public void ShowLeaderboardUI()
     {
+        panel.SetActive(true);
         leaderboardTexts.enabled = true;
         button.SetActive(true);
         DisplayLeaderboard();
@@ -99,6 +98,7 @@ public class LeaderboardManager : MonoBehaviour
 
     public void HideLeaderboardUI()
     {
+        panel.SetActive(false);
         leaderboardTexts.enabled = false;
         button.SetActive(false);
     }

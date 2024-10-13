@@ -99,9 +99,9 @@ public class Spawner : MonoBehaviour
             attempts++;
 
             // Limit attempts to prevent infinite loops
-            if (attempts > 99999999)
+            if (attempts > 10)
             {
-                Debug.LogWarning("Failed to find unique spawn position after 99999999 attempts.");
+                Debug.LogWarning("Failed to find unique spawn position after 10 attempts.");
                 return spawnPosition; // Fallback to the last generated position
             }
         } while (IsPositionOccupied(spawnPosition));
@@ -324,8 +324,9 @@ public class Spawner : MonoBehaviour
 
     public void AcidDropCaught()
     {
-        acidSlider.value += acidDropDamage;
-        if (acidSlider.value >= acidSlider.maxValue)
+        float newAcidValue = acidSlider.value + acidDropDamage;
+        StartCoroutine(SmoothFillSlider(acidSlider, newAcidValue, 5f));
+        if (newAcidValue >= acidSlider.maxValue)
         {
             StartCoroutine(EmptyingBasketEvent());
         }
@@ -356,14 +357,14 @@ public class Spawner : MonoBehaviour
     public void HealthAppleCaught()
     {
         audioSource.PlayOneShot(sfx[0]);
-        lokeHealthSlider.value = Mathf.Min(lokeHealthSlider.value + healthIncreaseAmount, lokeMaxHealth);
-
-        if(lokeHealthSlider.value > 50)
+        float newHealthValue = Mathf.Min(lokeHealthSlider.value + healthIncreaseAmount, lokeMaxHealth);
+        StartCoroutine(SmoothFillSlider(lokeHealthSlider, newHealthValue, 5f));
+        if (newHealthValue > 50)
         {
             RemoveSmokeEffects();
         }
-        
-        if(lokeHealthSlider.value > 75)
+
+        if (newHealthValue > 75)
         {
             RemoveFlameEffects();
         }
@@ -376,6 +377,15 @@ public class Spawner : MonoBehaviour
         {
             audioSource.PlayOneShot(sfx[2]);
             playerMovement.ApplySpeedBoost();
+        }
+    }
+
+    private IEnumerator SmoothFillSlider(Slider slider, float targetValue, float fillSpeed)
+    {
+        while (Mathf.Abs(slider.value - targetValue) > 0.01f)
+        {
+            slider.value = Mathf.MoveTowards(slider.value, targetValue, fillSpeed * Time.deltaTime);
+            yield return null;
         }
     }
 }

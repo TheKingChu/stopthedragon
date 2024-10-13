@@ -23,6 +23,9 @@ public class PlayerMovement : MonoBehaviour
     private AudioSource audioSource;
     public AudioClip hitSfx;
 
+    [Header("Trail effect")]
+    public TrailRenderer speedTrail;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -34,6 +37,11 @@ public class PlayerMovement : MonoBehaviour
 
         //calculate the screen width in world units
         screenWidthInWorldUnits = Camera.main.aspect * Camera.main.orthographicSize * 2f;
+
+        if(speedTrail != null)
+        {
+            speedTrail.emitting = false;
+        }
     }
 
     // Update is called once per frame
@@ -117,9 +125,21 @@ public class PlayerMovement : MonoBehaviour
     private IEnumerator SpeedBoostCoroutine()
     {
         isSpeedBoosted = true;
+
+        if(speedTrail != null)
+        {
+            speedTrail.emitting = true;
+        }
+
         moveSpeed *= speedBoostMultiplier;
         yield return new WaitForSeconds(speedBoostDuration);
+
         moveSpeed = originalMoveSpeed;
         isSpeedBoosted = false;
+
+        if(speedTrail != null)
+        {
+            speedTrail.emitting = false;
+        }
     }
 }
