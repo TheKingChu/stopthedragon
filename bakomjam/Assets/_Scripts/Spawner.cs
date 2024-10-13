@@ -214,6 +214,7 @@ public class Spawner : MonoBehaviour
         StartCoroutine(ScreenPulseRed());
         //step 3 sound
         audioSource.PlayOneShot(sfx[5]);
+        audioSource.PlayOneShot(sfx[6]);
         //wait before spawning the stalactites
         yield return new WaitForSeconds(1.5f);
         //step 4 spawning
